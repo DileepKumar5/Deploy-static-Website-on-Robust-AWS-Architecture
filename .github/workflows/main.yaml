@@ -10,28 +10,28 @@ on:
 
 jobs:
   testing:
-  runs-on: ubuntu-latest
-  steps:
+    runs-on: ubuntu-latest
+    steps:
 
-    name: Checkout Repository to Ubuntu Runner
-    uses: actions/checkout@v3
+      name: Checkout Repository to Ubuntu Runner
+      uses: actions/checkout@v3
 
-    name: Set up Node.js
-    uses: actions/setup-node@v3
-    with:
-      node-version: 18
+      name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: 18
 
-    name: Installing Dependecies
-    run: npm ci
+      name: Installing Dependecies
+      run: npm ci
 
-    name: Run Prettier
-    run: npx prettier --check "**/*.{html,css,js}"
+      name: Run Prettier
+      run: npx prettier --check "**/*.{html,css,js}"
 
-    name: Run HTML Hint
-    run: npx htmlint "**/*.html"
+      name: Run HTML Hint
+      run: npx htmlint "**/*.html"
 
-    name: Run Eslint
-    run: npx eslint js --ext .js 
+      name: Run Eslint
+      run: npx eslint js --ext .js 
 
-    name: Run Stylelint
-    run: npx stylelint "**/*.css"
+      name: Run Stylelint
+      run: npx stylelint "**/*.css"

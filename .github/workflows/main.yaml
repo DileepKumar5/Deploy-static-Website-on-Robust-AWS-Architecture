@@ -30,7 +30,8 @@ jobs:
       - name: Run HTML Hint
         run: npx htmlint "**/*.html"
 
-
+      - name: Run Eslint
+        run: npx eslint js --ext .js 
 
       - name: Run Stylelint
         run: npx stylelint "**/*.css"

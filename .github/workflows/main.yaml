@@ -28,7 +28,7 @@ jobs:
         run: npx prettier --check "**/*.{html,css,js}"
 
       - name: Run HTML Hint
-        run: npx htmlint "**/*.html"
+        run: npx htmlhint "**/*.html"
 
       - name: Run Eslint
         run: npx eslint js --ext .js 

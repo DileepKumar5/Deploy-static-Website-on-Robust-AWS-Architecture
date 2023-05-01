@@ -1,10 +1,10 @@
-@media (max-width: 1120px) {
+@media (width <= 1120px) {
   .team_section .team_container .box.b-3 {
     margin-top: 100px;
   }
 }
 
-@media (max-width: 992px) {
+@media (width <= 992px) {
   .hero_area {
     height: auto;
   }
@@ -14,7 +14,7 @@
   }
 
   .slider_section {
-    padding: 45px 0 175px 0;
+    padding: 45px 0 175px;
   }
 
   .footer_bg {
@@ -39,13 +39,13 @@
   }
 }
 
-@media (max-width: 768px) {
+@media (width <= 768px) {
   .slider_section .detail_box {
     text-align: center;
   }
 
   .slider_section {
-    padding: 45px 0 200px 0;
+    padding: 45px 0 200px;
   }
 
   .slider_section .img-box {
@@ -117,25 +117,25 @@
   }
 }
 
-@media (max-width: 576px) {
+@media (width <= 576px) {
   .slider_section .detail_box h1 {
     font-size: 3.5rem;
   }
 }
 
-@media (max-width: 480px) {
+@media (width <= 480px) {
 }
 
-@media (max-width: 420px) {
+@media (width <= 420px) {
   .slider_section .detail_box h1 {
     font-size: 3rem;
   }
 }
 
-@media (max-width: 360px) {
+@media (width <= 360px) {
 }
 
-@media (min-width: 1200px) {
+@media (width >= 1200px) {
   .container {
     max-width: 1170px;
   }

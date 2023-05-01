@@ -35,7 +35,6 @@ body {
   -webkit-box-orient: vertical;
   -webkit-box-direction: normal;
   flex-direction: column;
-  flex-direction: column;
   -webkit-box-align: start;
   -ms-flex-align: start;
   align-items: flex-start;
@@ -55,7 +54,6 @@ body {
   top: 50%;
   right: -30px;
   border-radius: 100%;
-  transform: translateY(-50%);
   transform: translateY(-50%);
 }
 
@@ -117,7 +115,6 @@ a:focus {
 .btn:focus {
   outline: none !important;
   box-shadow: none;
-  box-shadow: none;
 }
 
 .custom_nav-container .nav_search-btn {
@@ -169,11 +166,9 @@ a:focus {
   background-color: #fff;
   margin: 7px 0;
   transition: all 0.3s;
-  transition: all 0.3s;
 }
 
 .custom_nav-container .navbar-toggler[aria-expanded="true"] .s-1 {
-  transform: rotate(45deg);
   transform: rotate(45deg);
   margin: 0;
   margin-bottom: -4px;
@@ -185,7 +180,6 @@ a:focus {
 
 .custom_nav-container .navbar-toggler[aria-expanded="true"] .s-3 {
   transform: rotate(-45deg);
-  transform: rotate(-45deg);
   margin: 0;
   margin-top: -4px;
 }
@@ -193,7 +187,6 @@ a:focus {
 .custom_nav-container .navbar-toggler[aria-expanded="false"] .s-1,
 .custom_nav-container .navbar-toggler[aria-expanded="false"] .s-2,
 .custom_nav-container .navbar-toggler[aria-expanded="false"] .s-3 {
-  transform: none;
   transform: none;
 }
 
@@ -313,7 +306,6 @@ a:focus {
   right: 50%;
   z-index: 999;
   transform: translateX(50%);
-  transform: translateX(50%);
 }
 
 .slider_section .carousel_btn-container .carousel-control-prev,
@@ -341,7 +333,6 @@ a:focus {
 
 .slider_section .carousel_btn-container .carousel-control-next {
   background-image: url("../images/right-angle.png");
-  transform: translateY(-10px);
   transform: translateY(-10px);
 }
 
@@ -392,7 +383,6 @@ a:focus {
   -ms-flex-pack: center;
   justify-content: center;
   padding: 35px 60px;
-  flex-wrap: wrap;
   flex-wrap: wrap;
 }
 
@@ -465,7 +455,6 @@ a:focus {
   margin-bottom: 20px;
   padding: 20px;
   box-shadow: 0 0 25px 0 rgb(0 0 0 / 15%);
-  box-shadow: 0 0 25px 0 rgb(0 0 0 / 15%);
 }
 
 .work_section .detail_container .box .top-box {
@@ -536,7 +525,6 @@ a:focus {
   justify-content: center;
   padding: 25px 65px;
   flex-wrap: wrap;
-  flex-wrap: wrap;
 }
 
 .team_section .team_container .box {
@@ -572,7 +560,6 @@ a:focus {
   width: 120%;
   height: 75%;
   border-radius: 25px;
-  transform: translateX(-52.5%) rotate(-15deg);
   transform: translateX(-52.5%) rotate(-15deg);
   background-color: #041858;
 }
@@ -621,7 +608,6 @@ a:focus {
   display: flex;
   -webkit-box-orient: vertical;
   -webkit-box-direction: normal;
-  flex-direction: column;
   flex-direction: column;
   margin-top: 45px;
 }
@@ -703,7 +689,6 @@ a:focus {
   background-color: #fff;
   outline: none;
   box-shadow: none;
-  box-shadow: none;
   border-radius: 30px;
   padding-left: 20px;
   height: 45px;
@@ -718,7 +703,6 @@ a:focus {
   border-radius: 30px;
   text-transform: uppercase;
   border: none;
-  box-shadow: none;
   box-shadow: none;
   outline: none;
   margin-top: 15px;
@@ -807,7 +791,6 @@ a:focus {
   width: 10px;
   height: 10px;
   border-radius: 100%;
-  transform: translateY(-50%);
   transform: translateY(-50%);
   background-color: #d8bf36;
 }

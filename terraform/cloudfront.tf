@@ -4,17 +4,17 @@ resource "aws_cloudfront_origin_access_identity" "origin_access_identity" {
 
 resource "aws_cloudfront_distribution" "s3_distribution" {
   origin {
-    domain_name              = aws_s3_bucket.website-bucket.bucket_regional_domain_name
-    origin_id                = "S3-cloudfront"
+    domain_name = aws_s3_bucket.website-bucket.bucket_regional_domain_name
+    origin_id   = "S3-cloudfront"
     s3_origin_config {
       origin_access_identity = aws_cloudfront_origin_access_identity.origin_access_identity.cloudfront_access_identity_path
     }
   }
-  enabled             = true
-  is_ipv6_enabled     = true
+  enabled         = true
+  is_ipv6_enabled = true
   #default_root_object = "index.html"
   #aliases = ["aliza-dileep-hasaan.com"]
-   default_cache_behavior {
+  default_cache_behavior {
     allowed_methods  = ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"]
     cached_methods   = ["GET", "HEAD"]
     target_origin_id = "S3-cloudfront"
@@ -33,13 +33,13 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
     max_ttl                = 86400
   }
 
-restrictions {
+  restrictions {
     geo_restriction {
       restriction_type = "none"
     }
   }
 
-viewer_certificate {
+  viewer_certificate {
     cloudfront_default_certificate = true
   }
 

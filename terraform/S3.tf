@@ -4,21 +4,21 @@
 #   acl = "private"
 # }
 
-resource "aws_s3_bucket" "website-bucket"{
- bucket = "aliza-dileep-hasaan.com"
+resource "aws_s3_bucket" "website-bucket" {
+  bucket = "aliza-dileep-hasaan.com"
 }
 resource "aws_s3_bucket_public_access_block" "public_access" {
- bucket = aws_s3_bucket.website-bucket.id
+  bucket = aws_s3_bucket.website-bucket.id
 
- block_public_acls       = false
- block_public_policy     = false
- ignore_public_acls      = false
- restrict_public_buckets = false
+  block_public_acls       = false
+  block_public_policy     = false
+  ignore_public_acls      = false
+  restrict_public_buckets = false
 }
 
 data "aws_iam_policy_document" "s3_policy" {
   statement {
-    sid = "PublicReadGetObject"
+    sid    = "PublicReadGetObject"
     effect = "Allow"
     actions = [
       "s3:GetObject",
@@ -30,7 +30,7 @@ data "aws_iam_policy_document" "s3_policy" {
       "${aws_s3_bucket.website-bucket.arn}/*",
     ]
     principals {
-      type = "AWS"
+      type        = "AWS"
       identifiers = ["*"]
     }
   }

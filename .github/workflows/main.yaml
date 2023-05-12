@@ -34,3 +34,33 @@ jobs:
 
       - name: Run Stylelint
         run: npx stylelint "**/*.css"
+
+  infrastructure:
+    environment: prod
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository to Ubuntu 
+        uses: actions/checkout@v3
+
+      - name: Install and Configure AWS CLI
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secerts.AWS_ACCESS_KEY }}
+          aws-secret-key-id: ${{ secrets.AWS_SECRET_KEY }}
+          aws-region: us-east-1
+
+      - name: Install Terraform
+        uses: hashicorp/setup-terraform@v2
+
+      - name: Format Terraform file
+        run: terraform fmt
+      
+      - name: Terraform Init
+        run: terraform init
+      
+      - name: Terraform Validate
+        run: terraform validate 
+      
+      - name: Terraform Apply
+        run: terraform apply -auto-approve
+

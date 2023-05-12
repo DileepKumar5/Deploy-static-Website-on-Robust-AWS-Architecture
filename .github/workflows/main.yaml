@@ -9,7 +9,7 @@ on:
       - main
 
 jobs:
-  test:
+  code-review:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository to Ubuntu Runner
@@ -36,6 +36,7 @@ jobs:
         run: npx stylelint "**/*.css"
 
   infrastructure:
+    needs: code-review
     environment: prod
     runs-on: ubuntu-latest
     steps:

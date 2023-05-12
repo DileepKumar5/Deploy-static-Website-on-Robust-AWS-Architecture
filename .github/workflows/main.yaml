@@ -62,5 +62,8 @@ jobs:
         run: terraform validate 
       
       - name: Terraform Apply
-        run: terraform apply -auto-approve
-
+        uses: hashicorp/terraform-github-actions@v2
+        with: 
+          working-directory: terraform
+          terraform_command: apply
+          auto_approve: true

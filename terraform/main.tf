@@ -28,7 +28,7 @@ data "aws_iam_policy_document" "s3_policy" {
       identifiers = ["*"]
     }
     resources = ["arn:aws:s3:::wwww.${website_bucket}/*"]
-    
+
   }
 }
 

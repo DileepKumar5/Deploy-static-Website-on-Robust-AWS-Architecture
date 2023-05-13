@@ -12,7 +12,7 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
   }
   enabled         = true
   is_ipv6_enabled = true
-  #default_root_object = "index.html"
+  default_root_object = "index.html"
   #aliases = ["aliza-dileep-hasaan.com"]
   # custom_error_response = Need to add
   default_cache_behavior {
@@ -28,7 +28,7 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
       }
     }
 
-    viewer_protocol_policy = "allow-all"
+    viewer_protocol_policy = "redirect-to-https"
     min_ttl                = 0
     default_ttl            = 3600
     max_ttl                = 86400
@@ -44,4 +44,7 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
     cloudfront_default_certificate = true
   }
 
+}
+output "cloudfront_domain_name" {
+  value = aws_cloudfront_distribution.s3_distribution.domain_name
 }

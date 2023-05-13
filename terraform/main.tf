@@ -40,6 +40,15 @@ resource "aws_s3_bucket_policy" "bucket_policy" {
   bucket = aws_s3_bucket.website-bucket.id
   policy = data.aws_iam_policy_document.s3_policy.json
 }
-resource "aws_cloudfront_origin_access_identity" "cf_origin_access_identity" {
-  comment = "CF origin access identity"
+
+# resource "aws_cloudfront_origin_access_identity" "cf_origin_access_identity" {
+#   comment = "CF origin access identity"
+# }
+
+resource "aws_s3_bucket_website_configuration" "bucket_config" {
+  bucket = aws_s3_bucket.website-bucket.id
+
+  index_document {
+    suffix = "index.html"
+  }
 }

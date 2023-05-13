@@ -22,13 +22,17 @@ data "aws_iam_policy_document" "s3_policy" {
     effect = "Allow"
     actions = [
       "s3:GetObject",
+      # "s3:PutObject",
+      # "s3:ListBucket",
+    ]
+    resources = [
+      "${aws_s3_bucket.website-bucket.arn}",
+      "${aws_s3_bucket.website-bucket.arn}/*",
     ]
     principals {
       type        = "AWS"
       identifiers = ["*"]
     }
-    resources = ["arn:aws:s3:::wwww.${website_bucket}/*"]
-
   }
 }
 

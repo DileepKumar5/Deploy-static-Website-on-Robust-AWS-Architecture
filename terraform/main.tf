@@ -7,6 +7,12 @@
 resource "aws_s3_bucket" "website-bucket" {
   bucket = "aliza-dileep-hasaan.com"
 }
+resource "aws_s3_bucket_versioning" "versioning" {
+  bucket = aws_s3_bucket.website-bucket.id
+  versioning_configuration {
+    status = "Enabled"
+  }
+}
 resource "aws_s3_bucket_public_access_block" "public_access" {
   bucket = aws_s3_bucket.website-bucket.id
 
@@ -19,11 +25,9 @@ resource "aws_s3_bucket_public_access_block" "public_access" {
 data "aws_iam_policy_document" "s3_policy" {
   statement {
     sid    = "PublicReadGetObject"
-    effect = "Allow"
+    effect = "Deny"
     actions = [
       "s3:GetObject",
-      # "s3:PutObject",
-      # "s3:ListBucket",
     ]
     resources = [
       "${aws_s3_bucket.website-bucket.arn}",

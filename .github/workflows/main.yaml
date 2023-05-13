@@ -40,7 +40,7 @@ jobs:
     environment: prod
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Repository to Ubuntu 
+      - name: Checkout Repository to Ubuntu
         uses: actions/checkout@v3
 
       - name: Install and Configure AWS CLI
@@ -56,11 +56,11 @@ jobs:
       - name: Format Terraform file
         run: terraform fmt -check
         working-directory: terraform
-      
+
       - name: Terraform Init
         run: terraform init
         working-directory: terraform
-      
+
       - name: Terraform Validate
         run: terraform validate
         working-directory: terraform
@@ -89,4 +89,3 @@ jobs:
 
   #     - name: Invalidate Cloudfront cache
   #       run: aws cloudfront create-invalidation --distribution-id ECHQ8BWEGEXUM --paths /
-         

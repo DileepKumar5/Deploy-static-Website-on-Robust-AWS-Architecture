@@ -64,28 +64,28 @@ jobs:
       - name: Terraform Validate
         run: terraform validate
         working-directory: terraform
+      
+      - name: Terraform Apply
+        run: terraform apply -auto-approve
+        working-directory: terraform
 
-  #     - name: Terraform Apply
-  #       run: terraform apply -auto-approve
-  #       working-directory: terraform
+  Deploy:
+    needs: infrastructure
+    environment: prod
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository to Ubuntu 
+        uses: actions/checkout@v3
 
-  # Deploy:
-  #   needs: infrastructure
-  #   environment: prod
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Checkout Repository to Ubuntu
-  #       uses: actions/checkout@v3
+      - name: Install and Configure AWS CLI
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
+          aws-region: us-east-1
+      
+      - name: sync static files to S3
+        run: aws s3 sync . s3://aliza-dileep-hasaan.com --delete
 
-  #     - name: Install and Configure AWS CLI
-  #       uses: aws-actions/configure-aws-credentials@v2
-  #       with:
-  #         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
-  #         aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
-  #         aws-region: us-east-1
-
-  #     - name: sync static files to S3
-  #       run: aws s3 sync . s3://aliza-dileep-hasaan.com --delete
-
-  #     - name: Invalidate Cloudfront cache
-  #       run: aws cloudfront create-invalidation --distribution-id ECHQ8BWEGEXUM --paths /
+      - name: Invalidate Cloudfront cache
+        run: aws cloudfront create-invalidation --distribution-id ECHQ8BWEGEXUM --paths /

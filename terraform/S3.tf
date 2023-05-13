@@ -22,8 +22,8 @@ data "aws_iam_policy_document" "s3_policy" {
     effect = "Allow"
     actions = [
       "s3:GetObject",
-      "s3:PutObject",
-      "s3:ListBucket",
+     # "s3:PutObject",
+     # "s3:ListBucket",
     ]
     resources = [
       "${aws_s3_bucket.website-bucket.arn}",
@@ -39,4 +39,7 @@ data "aws_iam_policy_document" "s3_policy" {
 resource "aws_s3_bucket_policy" "bucket_policy" {
   bucket = aws_s3_bucket.website-bucket.id
   policy = data.aws_iam_policy_document.s3_policy.json
+}
+resource "aws_cloudfront_origin_access_identity" "cf_origin_access_identity" {
+  comment = "CF origin access identity"
 }

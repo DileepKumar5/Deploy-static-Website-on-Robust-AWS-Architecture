@@ -86,4 +86,7 @@ jobs:
       
       - name: sync static files to S3
         run: aws s3 sync . s3://aliza-dileep-hasaan.com --delete
+
+      - name: Invalidate Cloudfront cache
+        run: aws cloudfront create-invalidation --distribution-id ECHQ8BWEGEXUM --paths 
          

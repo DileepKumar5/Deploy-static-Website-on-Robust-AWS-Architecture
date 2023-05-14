@@ -56,8 +56,8 @@ resource "aws_s3_bucket_lifecycle_configuration" "my_static_website_lifecycle_po
   bucket = aws_s3_bucket.website-bucket.id
 
   rule {
-    id      = "website-bucket"
-    status  = "Enabled"
+    id     = "website-bucket"
+    status = "Enabled"
     transition {
       days          = 30
       storage_class = "GLACIER"

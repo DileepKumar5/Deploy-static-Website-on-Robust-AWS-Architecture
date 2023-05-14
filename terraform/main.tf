@@ -51,6 +51,24 @@ resource "aws_s3_bucket_website_configuration" "bucket_config" {
   }
 }
 
+
+resource "aws_s3_bucket_lifecycle_configuration" "my_static_website_lifecycle_policy" {
+  bucket = aws_s3_bucket.website-bucket.id
+
+  rule {
+    id      = "website-bucket"
+    status  = "Enabled"
+    transition {
+      days          = 30
+      storage_class = "GLACIER"
+    }
+    expiration {
+      days = 90
+    }
+  }
+}
+
+
 # data "aws_s3_bucket_objects" "objects" {
 #   bucket = aws_s3_bucket.website-bucket.id
 # }

@@ -1,11 +1,6 @@
-# resource "aws_s3_bucket" "backend-bucket"{
-#   bucket = "backend-bucket-project-0001"
-#  # force_destroy = true
-#   acl = "private"
-# }
-
 resource "aws_s3_bucket" "website-bucket" {
   bucket = "aliza-dileep-hasaan.com"
+  force_destroy = true
 }
 resource "aws_s3_bucket_versioning" "versioning" {
   bucket = aws_s3_bucket.website-bucket.id
@@ -24,18 +19,17 @@ resource "aws_s3_bucket_public_access_block" "public_access" {
 
 data "aws_iam_policy_document" "s3_policy" {
   statement {
-    sid    = "PublicReadGetObject"
+    # sid    = "AllowLegacyOAIReadOnly"
     effect = "Allow"
     actions = [
       "s3:GetObject",
     ]
     resources = [
-      "${aws_s3_bucket.website-bucket.arn}",
       "${aws_s3_bucket.website-bucket.arn}/*",
     ]
     principals {
       type        = "AWS"
-      identifiers = ["*"]
+      identifiers = [aws_cloudfront_origin_access_identity.origin_access_identity.iam_arn]
     }
   }
 }
@@ -45,9 +39,6 @@ resource "aws_s3_bucket_policy" "bucket_policy" {
   policy = data.aws_iam_policy_document.s3_policy.json
 }
 
-# resource "aws_cloudfront_origin_access_identity" "cf_origin_access_identity" {
-#   comment = "CF origin access identity"
-# }
 
 resource "aws_s3_bucket_website_configuration" "bucket_config" {
   bucket = aws_s3_bucket.website-bucket.id
@@ -58,4 +49,15 @@ resource "aws_s3_bucket_website_configuration" "bucket_config" {
   error_document {
     key = "error.html"
   }
+}
+
+data "aws_s3_bucket_objects" "objects" {
+  bucket = aws_s3_bucket.website-bucket.id
+}
+
+resource "aws_s3_bucket_object" "update_cache_control" {
+  count = length(data.aws_s3_bucket_objects.objects.keys)
+  bucket = aws_s3_bucket.website-bucket.id
+  key    = data.aws_s3_bucket_objects.objects.keys[count.index]
+  cache_control = "max-age=7200, public"
 }

@@ -14,10 +14,9 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
   is_ipv6_enabled     = true
   default_root_object = "index.html"
   #aliases = ["aliza-dileep-hasaan.com"]
-  # custom_error_response = Need to add
-  custom_error_response {
-    error_code         = 404
-    response_code      = 404
+    custom_error_response {
+    error_code      = 403
+    response_code   = 403
     response_page_path = "/error.html"
   }
   default_cache_behavior {
@@ -31,12 +30,19 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
       cookies {
         forward = "none"
       }
+      # headers = ["Origin"]
     }
 
     viewer_protocol_policy = "redirect-to-https"
     min_ttl                = 0
     default_ttl            = 3600
     max_ttl                = 86400
+
+    # lambda_function_association {
+    #   event_type = "origin-response"
+    #   lambda_arn = aws_lambda_function.web_lambda.qualified_arn
+    #   include_body = false
+    # }
   }
 
   restrictions {

@@ -51,13 +51,13 @@ resource "aws_s3_bucket_website_configuration" "bucket_config" {
   }
 }
 
-data "aws_s3_bucket_objects" "objects" {
-  bucket = aws_s3_bucket.website-bucket.id
-}
+# data "aws_s3_bucket_objects" "objects" {
+#   bucket = aws_s3_bucket.website-bucket.id
+# }
 
-resource "aws_s3_bucket_object" "update_cache_control" {
-  count         = length(data.aws_s3_bucket_objects.objects.keys)
-  bucket        = aws_s3_bucket.website-bucket.id
-  key           = data.aws_s3_bucket_objects.objects.keys[count.index]
-  cache_control = "max-age=7200, public"
-}
+# resource "aws_s3_bucket_object" "update_cache_control" {
+#   count         = length(data.aws_s3_bucket_objects.objects.keys)
+#   bucket        = aws_s3_bucket.website-bucket.id
+#   key           = data.aws_s3_bucket_objects.objects.keys[count.index]
+#   cache_control = "max-age=7200, public"
+# }

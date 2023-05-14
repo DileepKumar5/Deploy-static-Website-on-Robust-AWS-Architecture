@@ -25,7 +25,7 @@ resource "aws_s3_bucket_public_access_block" "public_access" {
 data "aws_iam_policy_document" "s3_policy" {
   statement {
     sid    = "PublicReadGetObject"
-    effect = "Deny"
+    effect = "Allow"
     actions = [
       "s3:GetObject",
     ]

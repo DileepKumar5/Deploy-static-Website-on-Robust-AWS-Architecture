@@ -15,6 +15,11 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
   default_root_object = "index.html"
   #aliases = ["aliza-dileep-hasaan.com"]
   # custom_error_response = Need to add
+    custom_error_response {
+    error_code      = 404
+    response_code   = 404
+    response_page_path = "/error.html"
+  }
   default_cache_behavior {
     allowed_methods  = ["GET", "HEAD", "OPTIONS"]
     cached_methods   = ["GET", "HEAD", "OPTIONS"]

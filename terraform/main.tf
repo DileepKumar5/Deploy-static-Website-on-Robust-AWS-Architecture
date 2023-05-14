@@ -1,5 +1,5 @@
 resource "aws_s3_bucket" "website-bucket" {
-  bucket = "aliza-dileep-hasaan.com"
+  bucket        = "aliza-dileep-hasaan.com"
   force_destroy = true
 }
 resource "aws_s3_bucket_versioning" "versioning" {
@@ -56,8 +56,8 @@ data "aws_s3_bucket_objects" "objects" {
 }
 
 resource "aws_s3_bucket_object" "update_cache_control" {
-  count = length(data.aws_s3_bucket_objects.objects.keys)
-  bucket = aws_s3_bucket.website-bucket.id
-  key    = data.aws_s3_bucket_objects.objects.keys[count.index]
+  count         = length(data.aws_s3_bucket_objects.objects.keys)
+  bucket        = aws_s3_bucket.website-bucket.id
+  key           = data.aws_s3_bucket_objects.objects.keys[count.index]
   cache_control = "max-age=7200, public"
 }

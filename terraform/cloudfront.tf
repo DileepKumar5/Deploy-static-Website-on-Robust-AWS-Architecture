@@ -14,9 +14,9 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
   is_ipv6_enabled     = true
   default_root_object = "index.html"
   #aliases = ["aliza-dileep-hasaan.com"]
-    custom_error_response {
-    error_code      = 403
-    response_code   = 403
+  custom_error_response {
+    error_code         = 403
+    response_code      = 403
     response_page_path = "/error.html"
   }
   default_cache_behavior {

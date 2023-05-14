@@ -13,7 +13,7 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
   enabled             = true
   is_ipv6_enabled     = true
   default_root_object = "index.html"
-  #aliases = ["aliza-dileep-hasaan.com"]
+
   custom_error_response {
     error_code         = 403
     response_code      = 403
@@ -30,7 +30,6 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
       cookies {
         forward = "none"
       }
-      # headers = ["Origin"]
     }
 
     viewer_protocol_policy = "redirect-to-https"

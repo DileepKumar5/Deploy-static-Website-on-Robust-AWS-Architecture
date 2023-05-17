@@ -10,8 +10,8 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
       origin_access_identity = aws_cloudfront_origin_access_identity.origin_access_identity.cloudfront_access_identity_path
     }
   }
-  depends_on = [aws_cloudfront_origin_access_identity.origin_access_identity]  # Add this line to establish the dependency
-  
+  depends_on = [aws_cloudfront_origin_access_identity.origin_access_identity] # Add this line to establish the dependency
+
   enabled             = true
   is_ipv6_enabled     = true
   default_root_object = "index.html"

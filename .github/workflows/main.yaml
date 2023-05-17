@@ -103,6 +103,5 @@ jobs:
 
       - name: Change working directory back to root folder
         run: cd ..
-
       - name: Create Invalidation
-        run: aws cloudfront create-invalidation --distribution-id ${{ steps.get_distribution_id.outputs.distribution_id }} --paths "/*"
+        run: aws cloudfront create-invalidation --distribution-id ${{ needs.infrastructure.outputs.get_distribution_id }} --paths "/*"

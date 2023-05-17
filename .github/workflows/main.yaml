@@ -1,4 +1,4 @@
-name: Project CICD Pipeline
+name: Project CICD Pipeline.01
 
 on:
   push:
@@ -87,5 +87,14 @@ jobs:
       - name: Upload files to S3
         run: aws s3 sync . s3://aliza-dileep-hasaan.com --delete
 
-      - name: Invalidate Cloudfront cache
-        run: aws cloudfront create-invalidation --distribution-id ${{ secrets.AWS_DISTRIBUTION_ID }} --paths /
+      # - name: Invalidate Cloudfront cache
+      #   run: aws cloudfront create-invalidation --distribution-id ${{ secrets.AWS_DISTRIBUTION_ID }} --paths /
+      - name: Retrieve CloudFront distribution ID
+        id: get_distribution_id
+        run: echo "::set-output name=distribution_id::$(terraform output -raw cloudfront_distribution_id)"
+
+      - name: Create Invalidation
+        uses: aws-actions/aws-cli@v2
+        with:
+          version: "2.3.4"
+          args: cloudfront create-invalidation --distribution-id ${{ steps.get_distribution_id.outputs.distribution_id }} --paths /

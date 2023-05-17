@@ -10,6 +10,8 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
       origin_access_identity = aws_cloudfront_origin_access_identity.origin_access_identity.cloudfront_access_identity_path
     }
   }
+  depends_on = [aws_cloudfront_origin_access_identity.origin_access_identity]  # Add this line to establish the dependency
+  
   enabled             = true
   is_ipv6_enabled     = true
   default_root_object = "index.html"
@@ -57,4 +59,7 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
 }
 output "cloudfront_domain_name" {
   value = aws_cloudfront_distribution.s3_distribution.domain_name
+}
+output "cloudfront_distribution_id" {
+  value = aws_cloudfront_distribution.s3_distribution.id
 }

@@ -69,14 +69,6 @@ jobs:
         run: terraform apply -auto-approve
         working-directory: terraform
         
-      
-      - name: Change working directory to Terraform folder
-        run: cd terraform
-
-      - name: Retrieve CloudFront distribution ID
-        id: get_distribution_id
-        run: echo "::set-output name=distribution_id::$(terraform output -raw cloudfront_distribution_id)"
-
   Deploy:
     needs: infrastructure
     environment: prod
@@ -95,10 +87,10 @@ jobs:
       - name: Upload files to S3
         run: aws s3 sync . s3://aliza-dileep-hasaan.com --delete
 
-      # - name: Invalidate Cloudfront cache
-      #   run: aws cloudfront create-invalidation --distribution-id ${{ secrets.AWS_DISTRIBUTION_ID }} --paths /
+      - name: Invalidate Cloudfront cache
+        run: aws cloudfront create-invalidation --distribution-id ${{ secrets.AWS_DISTRIBUTION_ID }} --paths /
       # - name: Retrieve CloudFront distribution ID
       #   id: get_distribution_id
       #   run: echo "::set-output name=distribution_id::$(terraform output -raw cloudfront_distribution_id)"
-      - name: Create Invalidation
-        run: aws cloudfront create-invalidation --distribution-id ${{ needs.infrastructure.outputs.get_distribution_id }} --paths "/*"
+      # - name: Create Invalidation
+      #   run: aws cloudfront create-invalidation --distribution-id ${{ needs.infrastructure.outputs.get_distribution_id }} --paths "/*"

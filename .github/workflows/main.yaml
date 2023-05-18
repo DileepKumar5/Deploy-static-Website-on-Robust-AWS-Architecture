@@ -39,6 +39,9 @@ jobs:
     needs: code-review
     runs-on: ubuntu-latest
     steps:
+        - name: Install and Configure AWS CLI
+          uses: aws-actions/configure-aws-credentials@v2
+
       - name: Check if infrastructure exists 
         id: infrastructure_exists
         run: | 

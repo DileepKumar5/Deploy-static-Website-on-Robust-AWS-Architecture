@@ -121,10 +121,10 @@ jobs:
       - name: Store CF_ID in secrets
         run: echo "${{ steps.get_cf_id.outputs.cf_id }}"
         
-      - name: set secret
-        run: |
-          echo "::set-secret name=AWS_DISTRIBUTION_ID::${{ steps.get_cf_id.outputs.cf_id }}"
-          echo ${{ secrets.AWS_DISTRIBUTION_ID }}
+#       - name: set secret
+#         run: |
+#           echo "::set-secret name=AWS_DISTRIBUTION_ID::${{ steps.get_cf_id.outputs.cf_id }}"
+#           echo ${{ secrets.AWS_DISTRIBUTION_ID }}
 
         
 #         uses: hmanzur/actions-set-secret@v2.0.0
@@ -137,24 +137,23 @@ jobs:
 #         echo "CF_ID=${{ steps.get_cf_id.outputs.cf_id }}" >> $GITHUB_ENV
 #         echo "CF_ID=${{ steps.get_cf_id.outputs.cf_id }}"
         
-#       - name: Update AWS_DISTRIBUTION_ID secret
-# #         env:
-# #           REPO: ${{ github.repository }}
-#         run: |
-#           REPO_OWNER=${{ github.repository_owner }}
-#           REPO_NAME=${{ github.repository }}
-#           echo $CF_ID | gh secret set CF_ID --repo REPO_OWNER/REPO_NAME
-#         SECRET_NAME="AWS_DISTRIBUTION_ID"
-#           SECRET_VALUE="${{ steps.get_cf_id.outputs.CF_ID }}"
-#           REPO_OWNER=${{ github.repository_owner }}
-#           REPO_NAME=${{ github.repository }}
-#           curl -X PUT \
-#             -H "Authorization: Bearer ${{ secrets.GH_TOKEN }}" \
-#             -H "Accept: application/vnd.github.v3+json" \
-#             "https://api.github.com/repos/$REPO_OWNER/$REPO_NAME/actions/secrets/$SECRET_NAME" \
-#             -d "{\"encrypted_value\":\"$(echo -n $SECRET_VALUE | base64 -w 0)\",\"key_id\":\"$(curl -s -H \"Authorization: Bearer ${{ secrets.GH_TOKEN }}\" -H \"Accept: application/vnd.github.v3+json\" \"https://api.github.com/repos/$REPO_OWNER/$REPO_NAME/actions/secrets/public-key\" | jq -r .key_id)\"}"
+      - name: Update AWS_DISTRIBUTION_ID secret
+#         env:
+#           REPO: ${{ github.repository }}
+        run: |
+          REPO_OWNER=${{ github.repository_owner }}
+          REPO_NAME=${{ github.repository }}
+          SECRET_NAME="AWS_DISTRIBUTION_ID"
+          SECRET_VALUE="${{ steps.get_cf_id.outputs.cf_id }}"
+          REPO_OWNER=${{ github.repository_owner }}
+          REPO_NAME=${{ github.repository }}
+          curl -X PUT \
+            -H "Authorization: Bearer ${{ secrets.GH_TOKEN }}" \
+            -H "Accept: application/vnd.github.v3+json" \
+            "https://api.github.com/repos/$REPO_OWNER/$REPO_NAME/actions/secrets/$SECRET_NAME" \
+            -d "{\"encrypted_value\":\"$(echo -n $SECRET_VALUE | base64 -w 0)\",\"key_id\":\"$(curl -s -H \"Authorization: Bearer ${{ secrets.GH_TOKEN }}\" -H \"Accept: application/vnd.github.v3+json\" \"https://api.github.com/repos/$REPO_OWNER/$REPO_NAME/actions/secrets/public-key\" | jq -r .key_id)\"}"
 
-#           echo "Repository secret created or updated: $SECRET_NAME"
+          echo "Repository secret created or updated: $SECRET_NAME"
           
           
 #         DISTRIBUTION_ID=${{ needs.infrastructure.outputs.cf_id }}

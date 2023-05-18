@@ -101,16 +101,15 @@ jobs:
         id: get_cf_id
         run: |
           pwd
-          cd terraform
-          CF_ID=$(terraform output -raw cloudfront_distribution_id)
-          echo "::set-output name=cf_id::$CF_ID"
-          cd ..
-#         working-directory: ./terraform
+          echo "CF_ID=$(terraform output -raw cloudfront_distribution_id)" >> $GITHUB_ENV
+#         CF_ID=$(terraform output -raw cloudfront_distribution_id)
+#         echo "::set-output name=cf_id::$CF_ID"
+        working-directory: ./terraform
         
       - name: Store CF_ID in environment variable
-        run: |
-          echo "CF_ID=${{ steps.get_cf_id.outputs.cf_id }}" >> $GITHUB_ENV
-          echo "CF_ID=${{ steps.get_cf_id.outputs.cf_id }}"
+        run: echo $CF_ID
+#         echo "CF_ID=${{ steps.get_cf_id.outputs.cf_id }}" >> $GITHUB_ENV
+#         echo "CF_ID=${{ steps.get_cf_id.outputs.cf_id }}"
         
       - name: Update AWS_DISTRIBUTION_ID secret
         env:

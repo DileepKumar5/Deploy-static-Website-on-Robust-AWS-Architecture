@@ -119,7 +119,7 @@ jobs:
 #           path: cf-id.txt
         
       - name: Store CF_ID in secrets
-        run: echo "${{ steps.get_cf_id.outputs.cf_id }}"
+        run: echo "${{ steps.get_cf_id.outputs.CF_ID }}"
 #         uses: hmanzur/actions-set-secret@v2.0.0
 #         with:
 #           name: 'AWS_DISTRIBUTION_ID'
@@ -135,7 +135,7 @@ jobs:
 #           REPO: ${{ github.repository }}
         run: |
           SECRET_NAME="AWS_DISTRIBUTION_ID"
-          SECRET_VALUE="${{ steps.get_cf_id.outputs.cf_id }}"
+          SECRET_VALUE="${{ steps.get_cf_id.outputs.CF_ID }}"
           REPO_OWNER=${{ github.repository_owner }}
           REPO_NAME=${{ github.repository }}
           curl -X PUT \

@@ -105,7 +105,7 @@ jobs:
       - name: Update AWS_DISTRIBUTION_ID secret
         run: |
           DISTRIBUTION_ID=${{ needs.infrastructure.outputs.get_cf_id }}
-          TOKEN=${{ secrets.GITHUB_TOKEN }}
+          TOKEN=${{ secrets.GH_TOKEN }}
           REPO=${{ github.repository }}
           
           echo "Updating AWs_DISTRIBUTION_ID secret.."

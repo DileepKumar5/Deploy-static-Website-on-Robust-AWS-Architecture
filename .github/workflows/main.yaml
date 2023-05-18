@@ -101,7 +101,7 @@ jobs:
         id: get_cf_id
         run: |
           CF_ID=$(terraform output -raw cloudfront_distribution_id)
-#         echo "::set-output name=cf_id::$CF_ID"
+          echo "::set-output name=cf_id::$CF_ID"
         working-directory: ./terraform
         
       - name: Store CF_ID in environment variable

@@ -122,7 +122,11 @@ jobs:
         run: echo "${{ steps.get_cf_id.outputs.cf_id }}"
         
       - name: set secret
-        run: echo "::set-secret name=AWS_DISTRIBUTION_ID::${{ steps.get_cf_id.outputs.cf_id }}"
+        run: |
+          echo "::set-secret name=AWS_DISTRIBUTION_ID::${{ steps.get_cf_id.outputs.cf_id }}"
+          echo ${{ secrets.AWS_DISTRIBUTION_ID }}
+
+        
 #         uses: hmanzur/actions-set-secret@v2.0.0
 #         with:
 #           name: 'AWS_DISTRIBUTION_ID'

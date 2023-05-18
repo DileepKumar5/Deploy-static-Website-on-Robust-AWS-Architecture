@@ -106,8 +106,8 @@ jobs:
         
       - name: Store CF_ID in environment variable
         run: |
-          echo "CF_ID=$CF_ID" >> $GITHUB_ENV
-          echo "CF_ID=$CF_ID"
+          echo "CF_ID=${{ steps.get_cf_id.outputs.cf_id }}" >> $GITHUB_ENV
+          echo "CF_ID=${{ steps.get_cf_id.outputs.cf_id }}"
         
       - name: Update AWS_DISTRIBUTION_ID secret
         env:

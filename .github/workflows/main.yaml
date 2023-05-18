@@ -59,7 +59,7 @@ jobs:
             terraform_wrapper: false
         
         - name: Retrive current state file from s3
-          run: aws s3 cp s3://backend-bucket-project-001/test/terraformm.tfstate cuurent_state.tfstate
+          run: aws s3 cp s3://backend-bucket-project-001/test/terraform.tfstate cuurent_state.tfstate
 
         - name: Check if infrastructure exists 
           id: infrastructure_exists

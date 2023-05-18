@@ -72,7 +72,7 @@ jobs:
       - name: Terraform Apply
         run: terraform apply -auto-approve
         working-directory: terraform
-        when: steps.infrastructure_exists.outputs.rc != 0
+        if: steps.infrastructure_exists.outputs.rc != 0
         
   Deploy:
     needs: infrastructure

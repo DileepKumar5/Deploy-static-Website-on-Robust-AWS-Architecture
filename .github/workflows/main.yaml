@@ -101,7 +101,7 @@ jobs:
         
       - name: Get CloudFront distribution ID
         id: get_cf_id
-        run: echo "$(terraform output -raw cloudfront_distribution_id)"
+        run: echo "CF_ID=$(terraform output -raw cloudfront_distribution_id)" >> $GITHUB_ENV
 #           echo 'cf_id<<EOF' >> $GITHUB_OUTPUT
 #           echo "$(terraform output -raw cloudfront_distribution_id)" >> $GITHUB_OUTPUT
 #           echo 'EOF' >> $GITHUB_OUTPUT
@@ -112,7 +112,7 @@ jobs:
         working-directory: ./terraform
         
       - name: Store CF_ID in environment variable
-        run: echo "${{ steps.get_cf_id.outputs.cf_id }}"
+        run: echo "${{ env.CF_ID }}"
 #         echo "CF_ID=${{ steps.get_cf_id.outputs.cf_id }}" >> $GITHUB_ENV
 #         echo "CF_ID=${{ steps.get_cf_id.outputs.cf_id }}"
         

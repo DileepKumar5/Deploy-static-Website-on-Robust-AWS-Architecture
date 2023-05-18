@@ -142,7 +142,8 @@ jobs:
 #           REPO: ${{ github.repository }}
         run: |
           SECRET_NAME="AWS_DISTRIBUTION_ID"
-          SECRET_VALUE="${{ steps.get_cf_id.outputs.cf_id }}"
+          SECRET="${{ steps.get_cf_id.outputs.cf_id }}"
+          SECRET_VALUE=$(echo -n "$SECRET" | base64)
           REPO_OWNER=${{ github.repository_owner }}
           REPO_NAME=${{ github.repository }}
           PUBLIC_KEY=$(curl -s -H "Authorization: Bearer ${{ secrets.GH_TOKEN }}" -H "Accept: application/vnd.github.v3+json" "https://api.github.com/repos/$REPO_NAME/actions/secrets/public-key" | jq -r .key)

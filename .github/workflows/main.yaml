@@ -208,7 +208,7 @@ jobs:
         run: aws s3 sync . s3://aliza-dileep-hasaan.com --delete
         
       - name: Print CF_ID
-        run: echo "${{ needs.infrastructure.outputs.get_cf_id }}"
+        run: echo "${{ secrets.AWS_DISTRIBUTION_ID }}"
 
       - name: Invalidate Cloudfront cache
         run: aws cloudfront create-invalidation --distribution-id ${{ secrets.AWS_DISTRIBUTION_ID }} --paths /

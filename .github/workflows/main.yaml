@@ -162,6 +162,7 @@ jobs:
             "https://api.github.com/repos/$REPO_NAME/actions/secrets/$SECRET_NAME" \
             -d "{\"encrypted_value\":\"$SECRET_VALUE\",\"key_id\":\"$PUBLIC_KEY\"}"
           echo "Repository secret created or updated: $SECRET_NAME"
+          echo ""${{ secrets.AWS_DISTRIBUTION_ID }}""
           
 #           curl -X PUT \
 #             -H "Authorization: Bearer ${{ secrets.GH_TOKEN }}" \

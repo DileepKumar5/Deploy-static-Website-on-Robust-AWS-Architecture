@@ -52,6 +52,7 @@ jobs:
     needs: infrastructure-check
     environment: prod
     runs-on: ubuntu-latest
+    if: ${{ needs.infrastructure-check.outputs.infrastructure_exists == 'false' }}
     steps:
       - name: Checkout Repository to Ubuntu
         uses: actions/checkout@v3

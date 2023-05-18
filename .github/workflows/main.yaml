@@ -111,7 +111,7 @@ jobs:
     needs: infrastructure-check
     environment: prod
     runs-on: ubuntu-latest
-    if: ${{ failure() && needs.infrastructure-check.outputs.infrastructure_exists == 'false' }}
+    if: ${{ needs.infrastructure-check.outputs.infrastructure_exists == 'true' }}
     steps:
       - name: Checkout Repository to Ubuntu
         uses: actions/checkout@v3

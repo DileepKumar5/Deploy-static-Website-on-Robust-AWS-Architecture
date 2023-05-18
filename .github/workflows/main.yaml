@@ -80,6 +80,7 @@ jobs:
         - name: Check infrastructure changes
           id: infrastructure_changes
           run: |
+            terraform init
             INFRASTRUCTURE_CHANGE=$(git diff --name-only HEAD^ HEAD -- terraform/)
             if [[ -n "$INFRASTRUCTURE_CHANGE" ]]; then
               echo "infrastructure-changes=true" >> $GITHUB_OUTPUT

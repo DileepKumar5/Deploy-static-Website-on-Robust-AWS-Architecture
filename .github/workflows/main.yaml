@@ -99,7 +99,7 @@ jobs:
         
       - name: Get CloudFront distribution ID
         id: get_cf_id
-        run: echo "cf_id=$(terraform output -raw cloudfront_distribution_id)" >> $GITHUB_OUTPUT
+        run: echo "cf_id=$(terraform output -raw cloudfront_distribution_id)" >> $GITHUB_ENV
 #         echo 'var<<EOF' >> $GITHUB_OUTPUT
 #         echo 'EOF' >> $GITHUB_OUTPUT
 #         echo "::set-output name=cf_id::$(terraform output -raw cloudfront_distribution_id)"

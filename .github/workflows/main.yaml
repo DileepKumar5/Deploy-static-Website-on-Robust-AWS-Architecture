@@ -39,9 +39,14 @@ jobs:
     needs: code-review
     runs-on: ubuntu-latest
     steps:
-      - name: Check if infrastructure exists
-        run: aws s3 ls s3://aliza-dileep-hasaan.com
+      - name: Check if infrastructure exists 
         id: infrastructure_exists
+        run: | 
+          if aws s3 ls s3://aliza-dileep-hasaan.com; then
+            echo "::set-output name=infrastructure_exists::true"
+          else
+            echo "::set-output name=infrastructure_exists::false"
+          fi
 
   infrastructure:
     needs: infrastructure-check
@@ -102,7 +107,7 @@ jobs:
       #   run: echo "::set-output name=distribution_id::$(terraform output -raw cloudfront_distribution_id)"
       # - name: Create Invalidation
       #   run: aws cloudfront create-invalidation --distribution-id ${{ needs.infrastructure.outputs.get_distribution_id }} --paths "/*"
-  Redeploy:
+ Redeploy:
     needs: infrastructure-check
     environment: prod
     runs-on: ubuntu-latest

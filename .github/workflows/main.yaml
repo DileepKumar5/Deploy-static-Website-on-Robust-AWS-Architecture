@@ -80,6 +80,8 @@ jobs:
 
       - name: Install Terraform
         uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_wrapper: false
 
       - name: Format Terraform file
         run: terraform fmt -check

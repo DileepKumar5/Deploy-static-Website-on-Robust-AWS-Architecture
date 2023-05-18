@@ -38,29 +38,59 @@ jobs:
   infrastructure-check:
     needs: code-review
     runs-on: ubuntu-latest
+    outputs:
+      cf_id_output: ${{ steps.get_cf_id.outputs.cf_id }}
+      infrastructure-exists: ${{ steps.infrastructure_exists.outputs.infrastructure-exists }}
+      infrastructure-changed: ${{ steps.infrastructure_changes.outputs.infrastructure-changes }}
     steps:
+        - name: Checkout Repository to Ubuntu Runner
+          uses: actions/checkout@v3
+          
         - name: Install and Configure AWS CLI
           uses: aws-actions/configure-aws-credentials@v2
           with:
             aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
             aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
             aws-region: us-east-1
+            
+        - name: Install Terraform
+          uses: hashicorp/setup-terraform@v2
+          with:
+            terraform_wrapper: false
+        
+        - name: Retrive current state file from s3
+          run: aws s3 cp s3://backend-bucket-project-001/test/terrafrom.tfstate cuurent_state.tfstate
 
-#         - name: Check if infrastructure exists 
-#           id: infrastructure_exists
-#           run: | 
-#             if aws s3 ls s3://aliza-dileep-hasaan.com; then
+        - name: Check if infrastructure exists 
+          id: infrastructure_exists
+          run: | 
+            INFRASRTUCTURE_EXISTS=$(terraform state list -state=current_state.tfstate | grep "aws_s3_bucket.aliza-dileep-hasaan.com")
+            if [ $? -eq 0 ]; then
+              echo "infrastructure-exists=true" >> $GITHUB_OUTPUT
+            else
+              echo "infrastructure-exists=false" >> $GITHUB_OUTPUT
+            fi
+          working-directory: ./terraform
+#           if aws s3 ls s3://aliza-dileep-hasaan.com; then
 #               echo "::set-output name=infrastructure_exists::true"
 #             else
 #               echo "::set-output name=infrastructure_exists::false"
 #             fi
+        
+        - name: Check infrastructure changes
+          id: infrastructure_changes
+          run: |
+            INFRASTRUCTURE_CHANGE=$(git diff --name-only HEAD^ HEAD -- terraform/)
+            if [[ -n "$INFRASTRUCTURE_CHANGE" ]]; then
+              echo "infrastructure-changes=true" >> $GITHUB_OUTPUT
+            else
+              echo "infrastructure-changes=false" >> $GITHUB_OUTPUT
+            fi
           
-#         - name: Get CloudFront distribution ID
-#           id: get_cf_id
-#           run: |
-#             CF_ID=$(terraform output -raw cloudfront_distribution_id)
-#             echo "::set-output name=cf_id::$CF_ID"
-#           working-directory: terraform
+        - name: Get CloudFront distribution ID
+          id: get_cf_id
+          run: echo "cf_id=$(terraform output -raw cloudfront_distribution_id)" >> $GITHUB_OUTPUT
+          working-directory: ./terraform
 
   infrastructure:
     needs: infrastructure-check
@@ -68,7 +98,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       cf_id_output: ${{ steps.get_cf_id.outputs.cf_id }}
-#     if: ${{ needs.infrastructure-check.outputs.infrastructure_exists == 'false' }}
+    if: ${{ needs.infrastructure-check.outputs.infrastructure-exists == 'false' || needs.infrastructure-check.outputs.infrastructure-changes == 'true' }}
     steps:
       - name: Checkout Repository to Ubuntu
         uses: actions/checkout@v3
@@ -151,24 +181,24 @@ jobs:
         run: aws cloudfront create-invalidation --distribution-id ${{ needs.infrastructure.outputs.cf_id_output }} --paths /
 
 
-#   Redeploy:
-#     needs: infrastructure-check
-#     environment: prod
-#     runs-on: ubuntu-latest
-# #     if: ${{ needs.infrastructure-check.outputs.infrastructure_exists == 'true' }}
-#     steps:
-#       - name: Checkout Repository to Ubuntu
-#         uses: actions/checkout@v3
+  Redeploy:
+    needs: infrastructure-check
+    environment: prod
+    runs-on: ubuntu-latest
+    if: ${{ needs.infrastructure-check.outputs.infrastructure-exists == 'true' && needs.infrastructure-check.outputs.infrastructure-changes == 'false'}}
+    steps:
+      - name: Checkout Repository to Ubuntu
+        uses: actions/checkout@v3
 
-#       - name: Install and Configure AWS CLI
-#         uses: aws-actions/configure-aws-credentials@v2
-#         with:
-#           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
-#           aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
-#           aws-region: us-east-1
+      - name: Install and Configure AWS CLI
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
+          aws-region: us-east-1
 
-#       - name: Upload files to S3
-#         run: aws s3 sync . s3://aliza-dileep-hasaan.com --delete
+      - name: Upload files to S3
+        run: aws s3 sync . s3://aliza-dileep-hasaan.com --delete
 
-#       - name: Invalidate Cloudfront cache
-#         run: aws cloudfront create-invalidation --distribution-id ${{ secrets.AWS_DISTRIBUTION_ID }} --paths /
+      - name: Invalidate Cloudfront cache
+        run: aws cloudfront create-invalidation --distribution-id ${{ needs.infrastructure-check.outputs.cf_id_output }} --paths /

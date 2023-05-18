@@ -103,12 +103,14 @@ jobs:
           echo "::set-output name=cf_id::$CF_ID"
         
       - name: Update AWS_DISTRIBUTION_ID secret
+        env:
+          REPO: ${{ github.repository }}
         run: |
-          DISTRIBUTION_ID=${{ needs.infrastructure.outputs.get_cf_id }}
+          DISTRIBUTION_ID=${{ needs.infrastructure.outputs.cf_id }}
           TOKEN=${{ secrets.GH_TOKEN }}
-          REPO=${{ github.repository }}
           
-          echo "Updating AWs_DISTRIBUTION_ID secret.."
+          echo "Updating AWS_DISTRIBUTION_ID secret.."
+          echo "$REPO"
           
           curl -X PATCH \
             -H "Authorization: Bearer $TOKEN" \
@@ -142,24 +144,24 @@ jobs:
       #   run: echo "::set-output name=distribution_id::$(terraform output -raw cloudfront_distribution_id)"
       # - name: Create Invalidation
       #   run: aws cloudfront create-invalidation --distribution-id ${{ needs.infrastructure.outputs.get_distribution_id }} --paths "/*"
-  Redeploy:
-    needs: infrastructure-check
-    environment: prod
-    runs-on: ubuntu-latest
-#     if: ${{ needs.infrastructure-check.outputs.infrastructure_exists == 'true' }}
-    steps:
-      - name: Checkout Repository to Ubuntu
-        uses: actions/checkout@v3
+#   Redeploy:
+#     needs: infrastructure-check
+#     environment: prod
+#     runs-on: ubuntu-latest
+# #     if: ${{ needs.infrastructure-check.outputs.infrastructure_exists == 'true' }}
+#     steps:
+#       - name: Checkout Repository to Ubuntu
+#         uses: actions/checkout@v3
 
-      - name: Install and Configure AWS CLI
-        uses: aws-actions/configure-aws-credentials@v2
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
-          aws-region: us-east-1
+#       - name: Install and Configure AWS CLI
+#         uses: aws-actions/configure-aws-credentials@v2
+#         with:
+#           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
+#           aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
+#           aws-region: us-east-1
 
-      - name: Upload files to S3
-        run: aws s3 sync . s3://aliza-dileep-hasaan.com --delete
+#       - name: Upload files to S3
+#         run: aws s3 sync . s3://aliza-dileep-hasaan.com --delete
 
-      - name: Invalidate Cloudfront cache
-        run: aws cloudfront create-invalidation --distribution-id ${{ secrets.AWS_DISTRIBUTION_ID }} --paths /
+#       - name: Invalidate Cloudfront cache
+#         run: aws cloudfront create-invalidation --distribution-id ${{ secrets.AWS_DISTRIBUTION_ID }} --paths /

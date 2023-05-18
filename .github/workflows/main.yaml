@@ -101,7 +101,7 @@ jobs:
         
       - name: Get CloudFront distribution ID
         id: get_cf_id
-        run: echo "$(terraform output -raw cloudfront_distribution_id)" >> cf-id.txt
+        run: echo "CF_ID=$(terraform output -raw cloudfront_distribution_id)"
 #         echo "CF_ID=$(terraform output -raw cloudfront_distribution_id)" >> ./my-env-file.txt
 #           echo 'cf_id<<EOF' >> $GITHUB_OUTPUT
 #           echo "$(terraform output -raw cloudfront_distribution_id)" >> $GITHUB_OUTPUT
@@ -112,32 +112,52 @@ jobs:
 #         echo "::set-output name=cf_id::$CF_ID"
         working-directory: ./terraform
         
-      - name: Publish Artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: cf_id
-          path: cf-id.txt
+#       - name: Publish Artifact
+#         uses: actions/upload-artifact@v2
+#         with:
+#           name: cf_id
+#           path: cf-id.txt
         
-      - name: Store CF_ID in environment variable
+      - name: Store CF_ID in secrets
         run: echo "${{ steps.get_cf_id.outputs.cf_id }}"
+#         uses: hmanzur/actions-set-secret@v2.0.0
+#         with:
+#           name: 'AWS_DISTRIBUTION_ID'
+#           value: echo "$(terraform output -raw cloudfront_distribution_id)"
+#           repository: hmanzur/actions-set-secret
+#           token: ${{ secrets.REPO_ACCESS_TOKEN }}
+#         run: echo "${{ steps.get_cf_id.outputs.cf_id }}"
 #         echo "CF_ID=${{ steps.get_cf_id.outputs.cf_id }}" >> $GITHUB_ENV
 #         echo "CF_ID=${{ steps.get_cf_id.outputs.cf_id }}"
         
       - name: Update AWS_DISTRIBUTION_ID secret
-        env:
-          REPO: ${{ github.repository }}
+#         env:
+#           REPO: ${{ github.repository }}
         run: |
-          DISTRIBUTION_ID=${{ needs.infrastructure.outputs.cf_id }}
-          TOKEN=${{ secrets.GH_TOKEN }}
+          SECRET_NAME="AWS_DISTRIBUTION_ID"
+          SECRET_VALUE="${{ steps.get_cf_id.outputs.cf_id }}"
+          REPO_OWNER=${{ github.repository_owner }}
+          REPO_NAME=${{ github.repository }}
+          curl -X PUT \
+            -H "Authorization: Bearer ${{ secrets.GH_TOKEN }}" \
+            -H "Accept: application/vnd.github.v3+json" \
+            "https://api.github.com/repos/$REPO_OWNER/$REPO_NAME/actions/secrets/$SECRET_NAME" \
+            -d "{\"encrypted_value\":\"$(echo -n $SECRET_VALUE | base64 -w 0)\",\"key_id\":\"$(curl -s -H \"Authorization: Bearer ${{ secrets.GH_TOKEN }}\" -H \"Accept: application/vnd.github.v3+json\" \"https://api.github.com/repos/$REPO_OWNER/$REPO_NAME/actions/secrets/public-key\" | jq -r .key_id)\"}"
+
+          echo "Repository secret created or updated: $SECRET_NAME"
           
-          echo "Updating AWS_DISTRIBUTION_ID secret.."
-          echo "$REPO"
           
-          curl -X PATCH \
-            -H "Authorization: Bearer $TOKEN" \
-            -H "Accept: application/vnd.github+json" \
-            "https://api.github.com/repos/$REPO/actions/secrets/AWS_DISTRIBUTION_ID" \
-            -d "{\"encrypted_value\":\"$(echo -n $DISTRIBUTION_ID | openssl enc -base64 -A)\",\"key_id\":\"$(curl -s -H "Authorization: Bearer $TOKEN" -H "Accept: application/vnd.github+json" "https://api.github.com/repos/$REPO/actions/secrets/public-key" | jq -r .key_id)\"}"
+#         DISTRIBUTION_ID=${{ needs.infrastructure.outputs.cf_id }}
+#           TOKEN=${{ secrets.GH_TOKEN }}
+          
+#           echo "Updating AWS_DISTRIBUTION_ID secret.."
+#           echo "$REPO"
+          
+#           curl -X PATCH \
+#             -H "Authorization: Bearer $TOKEN" \
+#             -H "Accept: application/vnd.github+json" \
+#             "https://api.github.com/repos/$REPO/actions/secrets/AWS_DISTRIBUTION_ID" \
+#             -d "{\"encrypted_value\":\"$(echo -n $DISTRIBUTION_ID | openssl enc -base64 -A)\",\"key_id\":\"$(curl -s -H "Authorization: Bearer $TOKEN" -H "Accept: application/vnd.github+json" "https://api.github.com/repos/$REPO/actions/secrets/public-key" | jq -r .key_id)\"}"
           
           
   Deploy:

@@ -101,7 +101,7 @@ jobs:
         
       - name: Get CloudFront distribution ID
         id: get_cf_id
-        run: echo "CF_ID=$(terraform output -raw cloudfront_distribution_id)" >> my-env-file.txt
+        run: echo "CF_ID=$(terraform output -raw cloudfront_distribution_id)" >> ./my-env-file.txt
 #           echo 'cf_id<<EOF' >> $GITHUB_OUTPUT
 #           echo "$(terraform output -raw cloudfront_distribution_id)" >> $GITHUB_OUTPUT
 #           echo 'EOF' >> $GITHUB_OUTPUT

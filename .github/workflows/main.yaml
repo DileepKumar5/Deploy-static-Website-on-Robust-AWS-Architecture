@@ -101,7 +101,8 @@ jobs:
         
       - name: Get CloudFront distribution ID
         id: get_cf_id
-        run: echo "CF_ID=$(terraform output -raw cloudfront_distribution_id)" >> ./my-env-file.txt
+        run: echo "::set-output name=cf_id::$(terraform output -raw cloudfront_distribution_id)"
+#         echo "CF_ID=$(terraform output -raw cloudfront_distribution_id)" >> ./my-env-file.txt
 #           echo 'cf_id<<EOF' >> $GITHUB_OUTPUT
 #           echo "$(terraform output -raw cloudfront_distribution_id)" >> $GITHUB_OUTPUT
 #           echo 'EOF' >> $GITHUB_OUTPUT
@@ -117,8 +118,8 @@ jobs:
           name: environment-vars
           path: ./my-env-file.txt
         
-#       - name: Store CF_ID in environment variable
-#         run: echo "${{ env.CF_ID }}"
+      - name: Store CF_ID in environment variable
+        run: echo "${{ steps.get_cf_id.outputs.cf_id }}"
 #         echo "CF_ID=${{ steps.get_cf_id.outputs.cf_id }}" >> $GITHUB_ENV
 #         echo "CF_ID=${{ steps.get_cf_id.outputs.cf_id }}"
         
@@ -165,7 +166,7 @@ jobs:
         run: echo $(cat my-env-file.txt)
 
       - name: Invalidate Cloudfront cache
-        run: aws cloudfront create-invalidation --distribution-id $(cat my-env-file.txt) --paths /
+        run: aws cloudfront create-invalidation --distribution-id ${{ needs.infrastructure.outputs.get_cf_id }} --paths /
 #         run: aws cloudfront create-invalidation --distribution-id ${{ secrets.AWS_DISTRIBUTION_ID }} --paths /
       # - name: Retrieve CloudFront distribution ID
       #   id: get_distribution_id

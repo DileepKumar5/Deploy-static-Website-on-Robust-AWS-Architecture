@@ -101,7 +101,7 @@ jobs:
         
       - name: Get CloudFront distribution ID
         id: get_cf_id
-        run: echo "::set-output name=cf_id::$(terraform output -raw cloudfront_distribution_id)"
+        run: echo "CF_ID=$(terraform output -raw cloudfront_distribution_id)" >> $GITHUB_ENV
 #         echo "CF_ID=$(terraform output -raw cloudfront_distribution_id)" >> ./my-env-file.txt
 #           echo 'cf_id<<EOF' >> $GITHUB_OUTPUT
 #           echo "$(terraform output -raw cloudfront_distribution_id)" >> $GITHUB_OUTPUT
@@ -163,7 +163,7 @@ jobs:
         run: aws s3 sync . s3://aliza-dileep-hasaan.com --delete
         
       - name: Print CF_ID
-        run: echo ${{ needs.infrastructure.outputs.cf_id }}
+        run: echo $CF_ID
 
       - name: Invalidate Cloudfront cache
         run: aws cloudfront create-invalidation --distribution-id ${{ needs.infrastructure.outputs.cf_id }} --paths /

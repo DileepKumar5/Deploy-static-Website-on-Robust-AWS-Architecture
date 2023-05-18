@@ -55,12 +55,12 @@ jobs:
 #               echo "::set-output name=infrastructure_exists::false"
 #             fi
           
-        - name: Get CloudFront distribution ID
-          id: get_cf_id
-          run: |
-            CF_ID=$(terraform output -raw cloudfront_distribution_id)
-            echo "::set-output name=cf_id::$CF_ID"
-          working-directory: terraform
+#         - name: Get CloudFront distribution ID
+#           id: get_cf_id
+#           run: |
+#             CF_ID=$(terraform output -raw cloudfront_distribution_id)
+#             echo "::set-output name=cf_id::$CF_ID"
+#           working-directory: terraform
 
   infrastructure:
     needs: infrastructure-check
@@ -102,7 +102,7 @@ jobs:
         run: |
           CF_ID=$(terraform output -raw cloudfront_distribution_id)
           echo "::set-output name=cf_id::$CF_ID"
-        working-directory: terraform
+        working-directory: ./terraform
         
       - name: Update AWS_DISTRIBUTION_ID secret
         env:

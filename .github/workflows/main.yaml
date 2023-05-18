@@ -101,7 +101,7 @@ jobs:
         
       - name: Get CloudFront distribution ID
         id: get_cf_id
-        run: echo "CF_ID=$(terraform output -raw cloudfront_distribution_id)"
+        run: echo "::set-output name=cf_id::$(terraform output -raw cloudfront_distribution_id)"
 #         echo "CF_ID=$(terraform output -raw cloudfront_distribution_id)" >> ./my-env-file.txt
 #           echo 'cf_id<<EOF' >> $GITHUB_OUTPUT
 #           echo "$(terraform output -raw cloudfront_distribution_id)" >> $GITHUB_OUTPUT
@@ -119,7 +119,10 @@ jobs:
 #           path: cf-id.txt
         
       - name: Store CF_ID in secrets
-        run: echo "$CF_ID"
+        run: echo "${{ steps.get_cf_id.outputs.cf_id }}"
+        
+      - name: set secret
+        run: echo "::set-secret name=AWS_DISTRIBUTION_ID::${{ steps.get_cf_id.outputs.cf_id }}"
 #         uses: hmanzur/actions-set-secret@v2.0.0
 #         with:
 #           name: 'AWS_DISTRIBUTION_ID'
@@ -130,13 +133,13 @@ jobs:
 #         echo "CF_ID=${{ steps.get_cf_id.outputs.cf_id }}" >> $GITHUB_ENV
 #         echo "CF_ID=${{ steps.get_cf_id.outputs.cf_id }}"
         
-      - name: Update AWS_DISTRIBUTION_ID secret
-#         env:
-#           REPO: ${{ github.repository }}
-        run: |
-          REPO_OWNER=${{ github.repository_owner }}
-          REPO_NAME=${{ github.repository }}
-          echo $CF_ID | gh secret set CF_ID --repo REPO_OWNER/REPO_NAME
+#       - name: Update AWS_DISTRIBUTION_ID secret
+# #         env:
+# #           REPO: ${{ github.repository }}
+#         run: |
+#           REPO_OWNER=${{ github.repository_owner }}
+#           REPO_NAME=${{ github.repository }}
+#           echo $CF_ID | gh secret set CF_ID --repo REPO_OWNER/REPO_NAME
 #         SECRET_NAME="AWS_DISTRIBUTION_ID"
 #           SECRET_VALUE="${{ steps.get_cf_id.outputs.CF_ID }}"
 #           REPO_OWNER=${{ github.repository_owner }}

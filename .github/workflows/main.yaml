@@ -154,16 +154,16 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
           aws-region: us-east-1
-      - name: Download Artifact
-        uses: actions/download-artifact@v2
-        with:
-          name: environment-vars
+#       - name: Download Artifact
+#         uses: actions/download-artifact@v2
+#         with:
+#           name: environment-vars
 
       - name: Upload files to S3
         run: aws s3 sync . s3://aliza-dileep-hasaan.com --delete
         
       - name: Print CF_ID
-        run: echo $(cat my-env-file.txt)
+        run: echo ${{ needs.infrastructure.outputs.get_cf_id }}
 
       - name: Invalidate Cloudfront cache
         run: aws cloudfront create-invalidation --distribution-id ${{ needs.infrastructure.outputs.get_cf_id }} --paths /

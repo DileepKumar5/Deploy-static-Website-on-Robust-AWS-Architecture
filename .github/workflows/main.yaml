@@ -46,14 +46,14 @@ jobs:
             aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
             aws-region: us-east-1
 
-        - name: Check if infrastructure exists 
-          id: infrastructure_exists
-          run: | 
-            if aws s3 ls s3://aliza-dileep-hasaan.com; then
-              echo "::set-output name=infrastructure_exists::true"
-            else
-              echo "::set-output name=infrastructure_exists::false"
-            fi
+#         - name: Check if infrastructure exists 
+#           id: infrastructure_exists
+#           run: | 
+#             if aws s3 ls s3://aliza-dileep-hasaan.com; then
+#               echo "::set-output name=infrastructure_exists::true"
+#             else
+#               echo "::set-output name=infrastructure_exists::false"
+#             fi
           
         - name: Get CloudFront distribution ID
           id: get_cf_id
@@ -65,7 +65,7 @@ jobs:
     needs: infrastructure-check
     environment: prod
     runs-on: ubuntu-latest
-    if: ${{ needs.infrastructure-check.outputs.infrastructure_exists == 'false' }}
+#     if: ${{ needs.infrastructure-check.outputs.infrastructure_exists == 'false' }}
     steps:
       - name: Checkout Repository to Ubuntu
         uses: actions/checkout@v3
@@ -146,7 +146,7 @@ jobs:
     needs: infrastructure-check
     environment: prod
     runs-on: ubuntu-latest
-    if: ${{ needs.infrastructure-check.outputs.infrastructure_exists == 'true' }}
+#     if: ${{ needs.infrastructure-check.outputs.infrastructure_exists == 'true' }}
     steps:
       - name: Checkout Repository to Ubuntu
         uses: actions/checkout@v3

@@ -141,12 +141,14 @@ jobs:
 #         env:
 #           REPO: ${{ github.repository }}
         run: |
-          REPO_OWNER=${{ github.repository_owner }}
-          REPO_NAME=${{ github.repository }}
           SECRET_NAME="AWS_DISTRIBUTION_ID"
           SECRET_VALUE="${{ steps.get_cf_id.outputs.cf_id }}"
           REPO_OWNER=${{ github.repository_owner }}
           REPO_NAME=${{ github.repository }}
+          echo "$SECRET_VALUE"
+          echo "$REPO_OWNER"
+          echo "REPO_NAME"
+          echo "${{ secrets.GH_TOKEN }}"
           curl -X PUT \
             -H "Authorization: Bearer ${{ secrets.GH_TOKEN }}" \
             -H "Accept: application/vnd.github.v3+json" \

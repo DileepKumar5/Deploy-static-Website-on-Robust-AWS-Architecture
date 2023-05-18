@@ -111,6 +111,12 @@ jobs:
 #         echo "::set-output name=cf_id::$CF_ID"
         working-directory: ./terraform
         
+      - name: Publish Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: environment-vars
+          path: $GITHUB_ENV
+        
       - name: Store CF_ID in environment variable
         run: echo "${{ env.CF_ID }}"
 #         echo "CF_ID=${{ steps.get_cf_id.outputs.cf_id }}" >> $GITHUB_ENV
@@ -147,15 +153,19 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
           aws-region: us-east-1
+      - name: Download Artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: environment-vars
 
       - name: Upload files to S3
         run: aws s3 sync . s3://aliza-dileep-hasaan.com --delete
         
       - name: Print CF_ID
-        run: echo "CF_ID -> ${{ env.CF_ID }}"
+        run: echo $CF_ID
 
       - name: Invalidate Cloudfront cache
-        run: aws cloudfront create-invalidation --distribution-id ${{ env.CF_ID }} --paths /
+        run: aws cloudfront create-invalidation --distribution-id $CF_ID --paths /
 #         run: aws cloudfront create-invalidation --distribution-id ${{ secrets.AWS_DISTRIBUTION_ID }} --paths /
       # - name: Retrieve CloudFront distribution ID
       #   id: get_distribution_id

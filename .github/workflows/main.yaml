@@ -103,7 +103,7 @@ jobs:
     needs: code-review
     environment: prod
     runs-on: ubuntu-latest
-    if: needs.infrastructure.result == 'failure'
+    if: failure()
     steps:
       - name: Checkout Repository to Ubuntu
         uses: actions/checkout@v3

@@ -147,7 +147,7 @@ jobs:
           REPO_NAME=${{ github.repository }}
           echo "$SECRET_VALUE"
           echo "$REPO_OWNER"
-          echo "REPO_NAME"
+          echo "$REPO_NAME"
           echo "${{ secrets.GH_TOKEN }}"
           curl -X PUT \
             -H "Authorization: Bearer ${{ secrets.GH_TOKEN }}" \
@@ -193,8 +193,8 @@ jobs:
       - name: Upload files to S3
         run: aws s3 sync . s3://aliza-dileep-hasaan.com --delete
         
-#       - name: Print CF_ID
-#         run: echo "$(cat cf-id.txt)"
+      - name: Print CF_ID
+        run: echo "${{ needs.infrastructure.outputs.get_cf_id }}"
 
       - name: Invalidate Cloudfront cache
         run: aws cloudfront create-invalidation --distribution-id ${{ secrets.AWS_DISTRIBUTION_ID }} --paths /

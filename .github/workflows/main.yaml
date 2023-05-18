@@ -60,6 +60,7 @@ jobs:
           run: |
             CF_ID=$(terraform output -raw cloudfront_distribution_id)
             echo "::set-output name=cf_id::$CF_ID"
+          working-directory: terraform
 
   infrastructure:
     needs: infrastructure-check
@@ -101,6 +102,7 @@ jobs:
         run: |
           CF_ID=$(terraform output -raw cloudfront_distribution_id)
           echo "::set-output name=cf_id::$CF_ID"
+        working-directory: terraform
         
       - name: Update AWS_DISTRIBUTION_ID secret
         env:

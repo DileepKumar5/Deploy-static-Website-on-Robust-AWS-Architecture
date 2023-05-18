@@ -64,6 +64,7 @@ jobs:
         - name: Check if infrastructure exists 
           id: infrastructure_exists
           run: | 
+            terraform init
             INFRASRTUCTURE_EXISTS=$(terraform state list -state=current_state.tfstate | grep "aws_s3_bucket.aliza-dileep-hasaan.com")
             if [ $? -eq 0 ]; then
               echo "infrastructure-exists=true" >> $GITHUB_OUTPUT
@@ -80,7 +81,6 @@ jobs:
         - name: Check infrastructure changes
           id: infrastructure_changes
           run: |
-            terraform init
             INFRASTRUCTURE_CHANGE=$(git diff --name-only HEAD^ HEAD -- terraform/)
             if [[ -n "$INFRASTRUCTURE_CHANGE" ]]; then
               echo "infrastructure-changes=true" >> $GITHUB_OUTPUT

@@ -46,7 +46,7 @@ jobs:
             echo "::set-output name=infrastructure_exists::true"
           else
             echo "::set-output name=infrastructure_exists::false"
-          f
+          fi
 
   infrastructure:
     needs: infrastructure-check

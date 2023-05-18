@@ -101,7 +101,7 @@ jobs:
         
       - name: Get CloudFront distribution ID
         id: get_cf_id
-        run: echo "CF_ID=$(terraform output -raw cloudfront_distribution_id)" >> $GITHUB_ENV
+        run: echo "CF_ID=$(terraform output -raw cloudfront_distribution_id)" >> my-env-file.txt
 #           echo 'cf_id<<EOF' >> $GITHUB_OUTPUT
 #           echo "$(terraform output -raw cloudfront_distribution_id)" >> $GITHUB_OUTPUT
 #           echo 'EOF' >> $GITHUB_OUTPUT
@@ -115,10 +115,10 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: environment-vars
-          path: $GITHUB_ENV
+          path: ./my-env-file.txt
         
-      - name: Store CF_ID in environment variable
-        run: echo "${{ env.CF_ID }}"
+#       - name: Store CF_ID in environment variable
+#         run: echo "${{ env.CF_ID }}"
 #         echo "CF_ID=${{ steps.get_cf_id.outputs.cf_id }}" >> $GITHUB_ENV
 #         echo "CF_ID=${{ steps.get_cf_id.outputs.cf_id }}"
         
@@ -162,10 +162,10 @@ jobs:
         run: aws s3 sync . s3://aliza-dileep-hasaan.com --delete
         
       - name: Print CF_ID
-        run: echo $CF_ID
+        run: echo $(cat my-env-file.txt)
 
       - name: Invalidate Cloudfront cache
-        run: aws cloudfront create-invalidation --distribution-id $CF_ID --paths /
+        run: aws cloudfront create-invalidation --distribution-id $(cat my-env-file.txt) --paths /
 #         run: aws cloudfront create-invalidation --distribution-id ${{ secrets.AWS_DISTRIBUTION_ID }} --paths /
       # - name: Retrieve CloudFront distribution ID
       #   id: get_distribution_id

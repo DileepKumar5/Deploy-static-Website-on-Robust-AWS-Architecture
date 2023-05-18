@@ -101,14 +101,15 @@ jobs:
         id: get_cf_id
         run: |
           pwd
-          echo "::set-output name=cf_id::$(terraform output -raw cloudfront_distribution_id)"
+          echo "cf_id=$(terraform output -raw cloudfront_distribution_id)" >> $GITHUB_OUTPUT
+#         echo "::set-output name=cf_id::$(terraform output -raw cloudfront_distribution_id)"
 #         echo "CF_ID=$(terraform output -raw cloudfront_distribution_id)" >> $GITHUB_ENV
 #         CF_ID=$(terraform output -raw cloudfront_distribution_id)
 #         echo "::set-output name=cf_id::$CF_ID"
         working-directory: ./terraform
         
       - name: Store CF_ID in environment variable
-        run: echo "${{ needs.infrastructure.outputs.cf_id }}"
+        run: echo "${{ steps.get_cf_id.outputs.cf_id }}"
 #         echo "CF_ID=${{ steps.get_cf_id.outputs.cf_id }}" >> $GITHUB_ENV
 #         echo "CF_ID=${{ steps.get_cf_id.outputs.cf_id }}"
         

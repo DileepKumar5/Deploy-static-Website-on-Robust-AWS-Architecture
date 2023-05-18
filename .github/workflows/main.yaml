@@ -35,8 +35,16 @@ jobs:
       - name: Run Stylelint
         run: npx stylelint "**/*.css"
 
-  infrastructure:
+  infrastructure-check:
     needs: code-review
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check if infrastructure exists
+        run: aws s3 ls s3://aliza-dileep-hasaan.com
+        id: infrastructure_exists
+
+  infrastructure:
+    needs: infrastructure-check
     environment: prod
     runs-on: ubuntu-latest
     steps:

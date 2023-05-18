@@ -42,20 +42,26 @@ jobs:
         - name: Install and Configure AWS CLI
           uses: aws-actions/configure-aws-credentials@v2
 
-      - name: Check if infrastructure exists 
-        id: infrastructure_exists
-        run: | 
-          if aws s3 ls s3://aliza-dileep-hasaan.com; then
-            echo "::set-output name=infrastructure_exists::true"
-          else
-            echo "::set-output name=infrastructure_exists::false"
-          fi
+        - name: Check if infrastructure exists 
+          id: infrastructure_exists
+          run: | 
+            if aws s3 ls s3://aliza-dileep-hasaan.com; then
+              echo "::set-output name=infrastructure_exists::true"
+            else
+              echo "::set-output name=infrastructure_exists::false"
+            fi
+          
+        - name: Get CloudFront distribution ID
+          id: get_cf_id
+          run: |
+            CF_ID=$(terraform output -raw cloudfront_distribution_id)
+            echo "::set-output name=cf_id::$CF_ID"
 
   infrastructure:
     needs: infrastructure-check
     environment: prod
     runs-on: ubuntu-latest
-    if: ${{ needs.infrastructure-check.outputs.infrastructure_exists == 'true' }}
+    if: ${{ needs.infrastructure-check.outputs.infrastructure_exists == 'false' }}
     steps:
       - name: Checkout Repository to Ubuntu
         uses: actions/checkout@v3
@@ -86,6 +92,27 @@ jobs:
         run: terraform apply -auto-approve
         working-directory: terraform
         
+      - name: Get CloudFront distribution ID
+        id: get_cf_id
+        run: |
+          CF_ID=$(terraform output -raw cloudfront_distribution_id)
+          echo "::set-output name=cf_id::$CF_ID"
+        
+      - name: Update AWS_DISTRIBUTION_ID secret
+        run: |
+          DISTRIBUTION_ID=${{ needs.infrastructure.outputs.get_cf_id }}
+          TOKEN=${{ secrets.GITHUB_TOKEN }}
+          REPO=${{ github.repository }}
+          
+          echo "Updating AWs_DISTRIBUTION_ID secret.."
+          
+          curl -X PATCH \
+            -H "Authorization: Bearer $TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/$REPO/actions/secrets/AWS_DISTRIBUTION_ID" \
+            -d "{\"encrypted_value\":\"$(echo -n $DISTRIBUTION_ID | openssl enc -base64 -A)\",\"key_id\":\"$(curl -s -H "Authorization: Bearer $TOKEN" -H "Accept: application/vnd.github+json" "https://api.github.com/repos/$REPO/actions/secrets/public-key" | jq -r .key_id)\"}"
+          
+          
   Deploy:
     needs: infrastructure
     environment: prod
@@ -115,7 +142,7 @@ jobs:
     needs: infrastructure-check
     environment: prod
     runs-on: ubuntu-latest
-    if: ${{ needs.infrastructure-check.outputs.infrastructure_exists == 'false' }}
+    if: ${{ needs.infrastructure-check.outputs.infrastructure_exists == 'true' }}
     steps:
       - name: Checkout Repository to Ubuntu
         uses: actions/checkout@v3

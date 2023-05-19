@@ -65,8 +65,8 @@ jobs:
           id: infrastructure_exists
           run: | 
             terraform init
-            INFRASRTUCTURE_EXISTS=$(terraform state list -state=current_state.tfstate | grep "aws_cloudfront_distribution.s3_distribution")
-            if [ $? -eq 0 ]; then
+            INFRASRTUCTURE_EXISTS=$(terraform state list -state=current_state.tfstate | grep -c "aws_cloudfront_distribution.s3_distribution")
+            if [ $INFRASRTUCTURE_EXISTS -gt 0 ]; then
               echo "infrastructure-exists=true" >> $GITHUB_OUTPUT
             else
               echo "infrastructure-exists=false" >> $GITHUB_OUTPUT

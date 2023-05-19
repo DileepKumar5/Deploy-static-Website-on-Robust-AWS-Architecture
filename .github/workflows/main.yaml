@@ -133,9 +133,6 @@ jobs:
         working-directory: ./terraform
         
         
-      - name: Store CF_ID in secrets
-        run: echo "${{ steps.get_cf_id.outputs.cf_id }}"
-        
 #       - name: Update AWS_DISTRIBUTION_ID in secret
 #         run: |
 #           SECRET_NAME="AWS_DISTRIBUTION_ID"

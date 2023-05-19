@@ -41,7 +41,7 @@ jobs:
     outputs:
       cf_id_output: ${{ steps.get_cf_id.outputs.cf_id }}
       infrastructure-exists: ${{ steps.infrastructure_exists.outputs.infrastructure-exists }}
-      infrastructure-changed: ${{ steps.infrastructure_changes.outputs.infrastructure-changes }}
+#       infrastructure-changed: ${{ steps.infrastructure_changes.outputs.infrastructure-changes }}
     steps:
         - name: Checkout Repository to Ubuntu Runner
           uses: actions/checkout@v3
@@ -78,15 +78,15 @@ jobs:
 #               echo "::set-output name=infrastructure_exists::false"
 #             fi
         
-        - name: Check infrastructure changes
-          id: infrastructure_changes
-          run: |
-            INFRASTRUCTURE_CHANGE=$(git diff --name-status HEAD~1 HEAD -- ./terraform/)
-            if [[ -n "$INFRASTRUCTURE_CHANGE" ]]; then
-              echo "infrastructure-changes=true" >> $GITHUB_OUTPUT
-            else
-              echo "infrastructure-changes=false" >> $GITHUB_OUTPUT
-            fi
+#         - name: Check infrastructure changes
+#           id: infrastructure_changes
+#           run: |
+#             INFRASTRUCTURE_CHANGE=$(git diff --name-status HEAD~1 HEAD -- ./terraform/)
+#             if [[ -n "$INFRASTRUCTURE_CHANGE" ]]; then
+#               echo "infrastructure-changes=true" >> $GITHUB_OUTPUT
+#             else
+#               echo "infrastructure-changes=false" >> $GITHUB_OUTPUT
+#             fi
           
         - name: Get CloudFront distribution ID
           id: get_cf_id
@@ -99,7 +99,8 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       cf_id_output: ${{ steps.get_cf_id.outputs.cf_id }}
-    if: ${{ needs.infrastructure-check.outputs.infrastructure-exists == 'false' || needs.infrastructure-check.outputs.infrastructure-changes == 'true' }}
+#     if: ${{ needs.infrastructure-check.outputs.infrastructure-exists == 'false' || needs.infrastructure-check.outputs.infrastructure-changes == 'true' }}
+    if: ${{ needs.infrastructure-check.outputs.infrastructure-exists == 'false' }}
     steps:
       - name: Checkout Repository to Ubuntu
         uses: actions/checkout@v3
@@ -186,7 +187,8 @@ jobs:
     needs: infrastructure-check
     environment: prod
     runs-on: ubuntu-latest
-    if: ${{ needs.infrastructure-check.outputs.infrastructure-exists == 'true' && needs.infrastructure-check.outputs.infrastructure-changes == 'false'}}
+#     if: ${{ needs.infrastructure-check.outputs.infrastructure-exists == 'true' && needs.infrastructure-check.outputs.infrastructure-changes == 'false'}}
+    if: ${{ needs.infrastructure-check.outputs.infrastructure-exists == 'true' }}
     steps:
       - name: Checkout Repository to Ubuntu
         uses: actions/checkout@v3

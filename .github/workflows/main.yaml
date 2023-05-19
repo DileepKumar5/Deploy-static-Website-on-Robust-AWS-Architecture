@@ -81,7 +81,10 @@ jobs:
           
         - name: Get CloudFront distribution ID
           id: get_cf_id
-          run: echo "cf_id=$(terraform output -raw cloudfront_distribution_id)" >> $GITHUB_OUTPUT
+          run: |
+            if [ "${{ steps.infrastructure_exists.outputs.infrastructure-exists }}" == "true" ]; then
+              echo "cf_id=$(terraform output -raw cloudfront_distribution_id)" >> $GITHUB_OUTPUT
+            fi
           working-directory: ./terraform
 
   infrastructure:

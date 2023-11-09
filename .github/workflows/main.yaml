@@ -41,51 +41,51 @@ jobs:
     outputs:
       cf_id_output: ${{ steps.get_cf_id.outputs.cf_id }}
       infrastructure-exists: ${{ steps.infrastructure_exists.outputs.infrastructure-exists }}
-#       infrastructure-changed: ${{ steps.infrastructure_changes.outputs.infrastructure-changes }}
+    #       infrastructure-changed: ${{ steps.infrastructure_changes.outputs.infrastructure-changes }}
     steps:
-        - name: Checkout Repository to Ubuntu Runner
-          uses: actions/checkout@v3
-          
-        - name: Install and Configure AWS CLI
-          uses: aws-actions/configure-aws-credentials@v2
-          with:
-            aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
-            aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
-            aws-region: us-east-1
-            
-        - name: Install Terraform
-          uses: hashicorp/setup-terraform@v2
-          with:
-            terraform_wrapper: false
-        
-        - name: Retrive current state file from s3
-          run: aws s3 cp s3://backend-bucket-project-001/test/terraform.tfstate current_state.tfstate
+      - name: Checkout Repository to Ubuntu Runner
+        uses: actions/checkout@v3
 
-        - name: Check if infrastructure exists 
-          id: infrastructure_exists
-          run: | 
-            terraform init
-            INFRASTRUCTURE_EXISTS=$(terraform state show -state=current_state.tfstate aws_cloudfront_distribution.s3_distribution > /dev/null 2>&1 && echo true || echo false)
-            echo "infrastructure-exists=$INFRASTRUCTURE_EXISTS" >> $GITHUB_OUTPUT
-          working-directory: ./terraform
-        
-#         - name: Check infrastructure changes
-#           id: infrastructure_changes
-#           run: |
-#             INFRASTRUCTURE_CHANGE=$(git diff --name-status HEAD~1 HEAD -- ./terraform/)
-#             if [[ -n "$INFRASTRUCTURE_CHANGE" ]]; then
-#               echo "infrastructure-changes=true" >> $GITHUB_OUTPUT
-#             else
-#               echo "infrastructure-changes=false" >> $GITHUB_OUTPUT
-#             fi
-          
-        - name: Get CloudFront distribution ID
-          id: get_cf_id
-          run: |
-            if [ "${{ steps.infrastructure_exists.outputs.infrastructure-exists }}" == "true" ]; then
-              echo "cf_id=$(terraform output -raw cloudfront_distribution_id)" >> $GITHUB_OUTPUT
-            fi
-          working-directory: ./terraform
+      - name: Install and Configure AWS CLI
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
+          aws-region: us-east-1
+
+      - name: Install Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_wrapper: false
+
+      - name: Retrive current state file from s3
+        run: aws s3 cp s3://backend-bucket-project-001/test/terraform.tfstate current_state.tfstate
+
+      - name: Check if infrastructure exists
+        id: infrastructure_exists
+        run: |
+          terraform init
+          INFRASTRUCTURE_EXISTS=$(terraform state show -state=current_state.tfstate aws_cloudfront_distribution.s3_distribution > /dev/null 2>&1 && echo true || echo false)
+          echo "infrastructure-exists=$INFRASTRUCTURE_EXISTS" >> $GITHUB_OUTPUT
+        working-directory: ./terraform
+
+      #         - name: Check infrastructure changes
+      #           id: infrastructure_changes
+      #           run: |
+      #             INFRASTRUCTURE_CHANGE=$(git diff --name-status HEAD~1 HEAD -- ./terraform/)
+      #             if [[ -n "$INFRASTRUCTURE_CHANGE" ]]; then
+      #               echo "infrastructure-changes=true" >> $GITHUB_OUTPUT
+      #             else
+      #               echo "infrastructure-changes=false" >> $GITHUB_OUTPUT
+      #             fi
+
+      - name: Get CloudFront distribution ID
+        id: get_cf_id
+        run: |
+          if [ "${{ steps.infrastructure_exists.outputs.infrastructure-exists }}" == "true" ]; then
+            echo "cf_id=$(terraform output -raw cloudfront_distribution_id)" >> $GITHUB_OUTPUT
+          fi
+        working-directory: ./terraform
 
   infrastructure:
     needs: infrastructure-check
@@ -93,7 +93,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       cf_id_output: ${{ steps.get_cf_id.outputs.cf_id }}
-#     if: ${{ needs.infrastructure-check.outputs.infrastructure-exists == 'false' || needs.infrastructure-check.outputs.infrastructure-changes == 'true' }}
+    #     if: ${{ needs.infrastructure-check.outputs.infrastructure-exists == 'false' || needs.infrastructure-check.outputs.infrastructure-changes == 'true' }}
     if: ${{ needs.infrastructure-check.outputs.infrastructure-exists == 'false' }}
     steps:
       - name: Checkout Repository to Ubuntu
@@ -126,32 +126,31 @@ jobs:
       - name: Terraform Apply
         run: terraform apply -auto-approve
         working-directory: terraform
-        
+
       - name: Get CloudFront distribution ID
         id: get_cf_id
         run: echo "cf_id=$(terraform output -raw cloudfront_distribution_id)" >> $GITHUB_OUTPUT
         working-directory: ./terraform
-        
-        
-#       - name: Update AWS_DISTRIBUTION_ID in secret
-#         run: |
-#           SECRET_NAME="AWS_DISTRIBUTION_ID"
-#           SECRET="${{ steps.get_cf_id.outputs.cf_id }}"
-#           SECRET_VALUE=$(echo -n "$SECRET" | base64)
-#           SECRET_VALUE=$(echo "$SECRET_VALUE" | sed -e 's/[\/&]/\\&/g')
-#           REPO_OWNER=${{ github.repository_owner }}
-#           REPO_NAME=${{ github.repository }}
-#           PUBLIC_KEY_RESPONSE=$(curl -L -H "Accept: application/vnd.github+json" -H "Authorization: Bearer ${{ secrets.GH_TOKEN }}" -H "X-GitHub-Api-Version: 2022-11-28" https://api.github.com/repos/$REPO_NAME/actions/secrets/public-key)
-#           PUBLIC_KEY=$(echo "$PUBLIC_KEY_RESPONSE" | jq -r '.key_id')
-#           curl -L \
-#             -X PUT \
-#             -H "Accept: application/vnd.github+json" \
-#             -H "Authorization: Bearer ${{ secrets.GH_TOKEN }}" \
-#             -H "X-GitHub-Api-Version: 2022-11-28" \
-#             "https://api.github.com/repos/$REPO_NAME/actions/secrets/$SECRET_NAME" \
-#             -d "{\"encrypted_value\":\"$SECRET_VALUE\",\"key_id\":\"$PUBLIC_KEY\"}"
-#           echo "Repository secret created or updated: $SECRET_NAME"
-          
+
+  #       - name: Update AWS_DISTRIBUTION_ID in secret
+  #         run: |
+  #           SECRET_NAME="AWS_DISTRIBUTION_ID"
+  #           SECRET="${{ steps.get_cf_id.outputs.cf_id }}"
+  #           SECRET_VALUE=$(echo -n "$SECRET" | base64)
+  #           SECRET_VALUE=$(echo "$SECRET_VALUE" | sed -e 's/[\/&]/\\&/g')
+  #           REPO_OWNER=${{ github.repository_owner }}
+  #           REPO_NAME=${{ github.repository }}
+  #           PUBLIC_KEY_RESPONSE=$(curl -L -H "Accept: application/vnd.github+json" -H "Authorization: Bearer ${{ secrets.GH_TOKEN }}" -H "X-GitHub-Api-Version: 2022-11-28" https://api.github.com/repos/$REPO_NAME/actions/secrets/public-key)
+  #           PUBLIC_KEY=$(echo "$PUBLIC_KEY_RESPONSE" | jq -r '.key_id')
+  #           curl -L \
+  #             -X PUT \
+  #             -H "Accept: application/vnd.github+json" \
+  #             -H "Authorization: Bearer ${{ secrets.GH_TOKEN }}" \
+  #             -H "X-GitHub-Api-Version: 2022-11-28" \
+  #             "https://api.github.com/repos/$REPO_NAME/actions/secrets/$SECRET_NAME" \
+  #             -d "{\"encrypted_value\":\"$SECRET_VALUE\",\"key_id\":\"$PUBLIC_KEY\"}"
+  #           echo "Repository secret created or updated: $SECRET_NAME"
+
   Deploy:
     needs: infrastructure
     environment: prod
@@ -173,12 +172,11 @@ jobs:
       - name: Invalidate Cloudfront cache
         run: aws cloudfront create-invalidation --distribution-id ${{ needs.infrastructure.outputs.cf_id_output }} --paths "/*"
 
-
   Redeploy:
     needs: infrastructure-check
     environment: prod
     runs-on: ubuntu-latest
-#     if: ${{ needs.infrastructure-check.outputs.infrastructure-exists == 'true' && needs.infrastructure-check.outputs.infrastructure-changes == 'false'}}
+    #     if: ${{ needs.infrastructure-check.outputs.infrastructure-exists == 'true' && needs.infrastructure-check.outputs.infrastructure-changes == 'false'}}
     if: ${{ needs.infrastructure-check.outputs.infrastructure-exists == 'true' }}
     steps:
       - name: Checkout Repository to Ubuntu
